@@ -50,6 +50,7 @@ jobs:
         env:
           MAX_JOBS: "2"
           NVCC_THREADS: "2"
+          SCCACHE_GHA_ENABLED: "true"
         run: bash build_fa3.sh
 
       - name: Upload wheel

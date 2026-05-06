@@ -46,12 +46,6 @@ jobs:
       - name: Setup sccache
         uses: mozilla-actions/sccache-action@v0.0.9
 
-      - name: Wrap nvcc with sccache
-        run: |
-          cp /usr/local/cuda/bin/nvcc /usr/local/cuda/bin/nvcc.real
-          printf '#!/bin/bash\nexec sccache /usr/local/cuda/bin/nvcc.real "$@"\n' > /usr/local/cuda/bin/nvcc
-          chmod +x /usr/local/cuda/bin/nvcc
-
       - name: Build wheel
         env:
           MAX_JOBS: "2"

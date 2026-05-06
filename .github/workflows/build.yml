@@ -44,7 +44,7 @@ jobs:
         run: uv pip install -r requirements.txt --torch-backend=cu128
 
       - name: Setup sccache
-        uses: mozilla-actions/sccache-action@v0.0.9
+        uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Build wheel
         env:

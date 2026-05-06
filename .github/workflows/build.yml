@@ -51,6 +51,7 @@ jobs:
           MAX_JOBS: "2"
           NVCC_THREADS: "2"
           SCCACHE_GHA_ENABLED: "true"
+          PYTORCH_NVCC: "sccache /usr/local/cuda/bin/nvcc"
         run: bash build_fa3.sh
 
       - name: Upload wheel

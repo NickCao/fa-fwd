@@ -61,6 +61,24 @@ jobs:
           name: wheel-cu${{ matrix.cuda_version }}-${{ matrix.runner.arch }}
           path: build/*.whl
 
+  publish-testpypi:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      id-token: write
+    steps:
+      - name: Download wheels
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
   release:
     needs: build
     runs-on: ubuntu-latest

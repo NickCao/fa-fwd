@@ -55,7 +55,7 @@ jobs:
       - name: Retag wheel platform
         run: |
           . .venv/bin/activate
-          python -m wheel tags --platform-tag=manylinux_2_24_${{ matrix.arch }} --remove build/*.whl
+          python -m wheel tags --platform-tag=manylinux_2_34_${{ matrix.arch }} --remove build/*.whl
 
       - name: Upload wheel
         uses: actions/upload-artifact@v4

@@ -52,14 +52,10 @@ jobs:
           . .venv/bin/activate
           bash build_fa3.sh
 
-      - name: Repair wheel
+      - name: Retag wheel platform
         run: |
           . .venv/bin/activate
-          for whl in build/*.whl; do
-            auditwheel repair "$whl" --plat manylinux_2_24_${{ matrix.arch }} -w build/repaired
-          done
-          rm build/*.whl
-          mv build/repaired/*.whl build/
+          python -m wheel tags --platform-tag=manylinux_2_24_${{ matrix.arch }} --remove build/*.whl
 
       - name: Upload wheel
         uses: actions/upload-artifact@v4

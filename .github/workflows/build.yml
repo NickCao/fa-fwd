@@ -2,28 +2,28 @@ name: Build Wheels
 
 on:
   push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
 
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
-
-env:
-  TORCH_VERSION: "2.10"
 
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
-        cuda_version: ["12.8.0", "13.0.2"]
-        runner:
-          - runs-on: ubuntu-latest
+        include:
+          - runner: ubuntu-latest
             arch: x86_64
-          - runs-on: ubuntu-24.04-arm
+          - runner: ubuntu-24.04-arm
             arch: aarch64
-    runs-on: ${{ matrix.runner.runs-on }}
+    runs-on: ${{ matrix.runner }}
     container:
-      image: nvidia/cuda:${{ matrix.cuda_version }}-devel-ubuntu22.04
+      image: nvidia/cuda:12.8.0-devel-ubuntu22.04
     steps:
       - name: Install system dependencies
         run: |
@@ -49,9 +49,7 @@ jobs:
           echo "VIRTUAL_ENV=$(pwd)/.venv" >> $GITHUB_ENV
 
       - name: Install Python dependencies
-        run: |
-          CUDA_SHORT=$(echo "${{ matrix.cuda_version }}" | cut -d. -f1,2 | tr -d '.')
-          uv pip install -r requirements.txt --torch-backend=cu${CUDA_SHORT}
+        run: uv pip install -r requirements.txt --torch-backend=cu128
 
       - name: Build wheel
         env:
@@ -62,8 +60,9 @@ jobs:
       - name: Upload wheel
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-cu${{ matrix.cuda_version }}-${{ matrix.runner.arch }}
+          name: wheel-${{ matrix.arch }}
           path: build/*.whl
+          if-no-files-found: error
 
   publish-testpypi:
     needs: build
